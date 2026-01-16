@@ -10,82 +10,131 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at center, #0b0620, #000 70%);
+      background: radial-gradient(circle at top, #2b1055, #000);
       font-family: 'Segoe UI', sans-serif;
       color: white;
       overflow: hidden;
-    }
-    canvas#confetti {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-    }
-    .container { text-align: center; z-index: 2; }
-    .cake {
-      position: relative;
-      width: 260px;
-      height: 150px;
-      background: linear-gradient(#ff9acb, #ff6fae);
-      border-radius: 0 0 30px 30px;
-      margin: 20px auto 0;
-      box-shadow: inset 0 -12px rgba(0,0,0,0.15), 0 25px 50px rgba(0,0,0,0.45);
-    }
-    .cake::before {
-      content: '';
-      position: absolute;
-      top: -22px;
-      left: 0;
-      width: 100%;
-      height: 22px;
-      background: linear-gradient(#fff, #ffe4ef);
-      border-radius: 30px 30px 0 0;
-    }
-    .candles {
-      position: absolute;
-      top: -60px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-    }
-    .candle {
-      position: relative;
-      width: 12px;
-      height: 45px;
-      background: linear-gradient(#fff, #eaeaea);
-      border-radius: 4px;
-      margin: 0 auto;
-    }
-    .flame {
-      position: absolute;
-      top: -22px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      height: 20px;
-      background: radial-gradient(circle at 50% 30%, #fff6b0 0%, #ffd700 35%, #ff8c00 60%, #ff4500 100%);
-      border-radius: 50%;
-      animation: flicker 0.12s infinite;
-      filter: drop-shadow(0 0 10px rgba(255,180,60,0.9));
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-    .flame.off {
-      opacity: 0;
-      transform: translateX(-50%) scale(0.6);
-    }
-    @keyframes flicker {
-      0% { transform: translateX(-50%) scale(1); }
-      50% { transform: translateX(-50%) scale(0.9); }
-      100% { transform: translateX(-50%) scale(1); }
-    }
-    h1 { margin-bottom: 4px; font-size: 2rem; }
-    .hint { opacity: 0.8; font-size: 0.9rem; }
+    }.intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, #ff7eb3, #2b1055);
+  z-index: 5;
+  animation: fadeIn 1s ease;
+}
+
+.intro .knot {
+  font-size: 4rem;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+canvas#confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hidden { display: none; }
+
+.container {
+  text-align: center;
+  z-index: 2;
+}
+
+h1 { margin-bottom: 6px; font-size: 2.2rem; }
+
+.name { opacity: 0.9; margin-bottom: 10px; font-size: 1.1rem; }
+
+.cake {
+  position: relative;
+  width: 260px;
+  height: 150px;
+  background: linear-gradient(#ff9acb, #ff5fa2);
+  border-radius: 0 0 30px 30px;
+  margin: 20px auto 0;
+  box-shadow: inset 0 -12px rgba(0,0,0,0.15), 0 25px 50px rgba(0,0,0,0.45);
+}
+
+.cake::before {
+  content: '';
+  position: absolute;
+  top: -25px;
+  left: 0;
+  width: 100%;
+  height: 25px;
+  background: linear-gradient(#fff, #ffe3ef);
+  border-radius: 30px 30px 0 0;
+}
+
+.candles {
+  position: absolute;
+  top: -65px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.candle {
+  position: relative;
+  width: 12px;
+  height: 45px;
+  background: linear-gradient(#fff, #eee);
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.flame {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 20px;
+  background: radial-gradient(circle at 50% 30%, #fff6b0 0%, #ffd700 35%, #ff8c00 60%, #ff4500 100%);
+  border-radius: 50%;
+  animation: flicker 0.12s infinite;
+  filter: drop-shadow(0 0 12px rgba(255,180,60,0.9));
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.flame.off {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.6);
+}
+
+@keyframes flicker {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(0.9); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="intro" id="intro">
+    <div class="knot">🎁</div>
+    <h1>Untie the knot</h1>
+    <p>Tap to open your surprise</p>
+  </div><canvas id="confetti"></canvas>
+
+  <div class="container hidden" id="main">
     <audio id="whoosh" preload="auto">
       <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1b7c3a7f44.mp3" type="audio/mpeg">
     </audio>
@@ -93,9 +142,7 @@
       <source src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_2c3c7f2f9b.mp3" type="audio/mpeg">
     </audio>
     <h1>Happy Birthday 🎉</h1>
-    <p class="name">To my amazing sister ❤️</p>
-    <div class="stage-note" id="stageNote">Get ready…</div>
-    <<p id="hint">Blow gently toward the mic 🎤</p>
+    <div class="name">Janhavi ❤️</div>
     <div class="cake">
       <div class="candles" id="candles"></div>
     </div>
@@ -105,11 +152,15 @@
       </div>
     <canvas id="confetti"></canvas>
   </div>  <script>
+    const intro = document.getElementById('intro');
+    const main = document.getElementById('main');
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     const candlesEl = document.getElementById('candles');
+
     const TOTAL = 20;
     let flames = [];
+    let extinguished = 0;
 
     function resizeCanvas() {
       canvas.width = innerWidth;
@@ -118,7 +169,19 @@
     resizeCanvas();
     addEventListener('resize', resizeCanvas);
 
-    // create 20 candles
+    // intro tap
+    intro.addEventListener('click', () => {
+      intro.classList.add('hidden');
+      main.classList.remove('hidden');
+      bgm.play();
+    });
+
+    // audio
+    const bgm = new Audio('https://cdn.pixabay.com/download/audio/2022/08/04/audio_2c3c7f2f9b.mp3');
+    bgm.loop = true;
+    bgm.volume = 0.4;
+
+    // create candles
     for (let i = 0; i < TOTAL; i++) {
       const c = document.createElement('div');
       c.className = 'candle';
@@ -129,10 +192,10 @@
       flames.push(f);
     }
 
-    // CONFETTI
+    // confetti
     let particles = [];
     function launchConfetti() {
-      for (let i = 0; i < 140; i++) {
+      for (let i = 0; i < 150; i++) {
         particles.push({
           x: canvas.width / 2,
           y: canvas.height / 3,
@@ -145,6 +208,7 @@
       }
       animateConfetti();
     }
+
     function animateConfetti() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
@@ -159,10 +223,17 @@
       if (particles.length) requestAnimationFrame(animateConfetti);
     }
 
-    // BLOW LOGIC (reliable, no mic, no camera permissions)
-    let extinguished = 0;
-    document.addEventListener('touchstart', () => blow());
-    document.addEventListener('click', () => blow());
+    // shake to blow
+    let lastShake = 0;
+    window.addEventListener('devicemotion', e => {
+      const a = e.accelerationIncludingGravity;
+      if (!a) return;
+      const force = Math.abs(a.x) + Math.abs(a.y) + Math.abs(a.z);
+      if (force > 35 && Date.now() - lastShake > 600) {
+        lastShake = Date.now();
+        blow();
+      }
+    });
 
     function blow() {
       if (extinguished >= TOTAL) return;
