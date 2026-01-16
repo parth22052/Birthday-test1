@@ -1,0 +1,201 @@
+index.html
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday 🎂</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #0b0620, #000 70%);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    canvas#confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+    .container { text-align: center; z-index: 2; }
+    .stage-note {
+      opacity: 0.75;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      transition: opacity 0.6s ease;
+    }
+    .cake {
+      position: relative;
+      width: 200px;
+      height: 120px;
+      background: #ffb6c1;
+      border-radius: 0 0 20px 20px;
+      margin: 0 auto;
+      box-shadow: inset 0 -10px rgba(0,0,0,0.1), 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .candle {
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 15px;
+      height: 50px;
+      background: linear-gradient(#fff, #eee);
+      border-radius: 5px;
+    }
+    .flame {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 28px;
+      background: radial-gradient(circle at 50% 30%, #fff3a0 0%, #ffd700 35%, #ff8c00 60%, #ff4500 100%);
+      border-radius: 50%;
+      animation: flicker 0.12s infinite;
+      filter: drop-shadow(0 0 12px rgba(255,180,60,0.9)) drop-shadow(0 0 28px rgba(255,120,20,0.6));
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .smoke {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, rgba(200,200,200,0.8), rgba(200,200,200,0.1));
+      border-radius: 50%;
+      transform: translateX(-50%);
+      animation: smoke 2.5s ease-out forwards;
+    }
+    @keyframes flicker {
+      0% { transform: translateX(-50%) scale(1); }
+      50% { transform: translateX(-50%) scale(0.92); }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+    @keyframes smoke {
+      0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+      20% { opacity: 0.6; }
+      100% { opacity: 0; transform: translate(-50%, -60px) scale(1.6); }
+    }
+    h1 { margin-bottom: 4px; font-size: 2.2rem; }
+    .name { opacity: 0.85; margin-bottom: 10px; }
+    @media (max-width: 600px) {
+      h1 { font-size: 1.9rem; }
+      .cake { transform: scale(0.95); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <audio id="whoosh" preload="auto">
+      <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1b7c3a7f44.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="music" preload="auto">
+      <source src="https://cdn.pixabay.com/download/audio/2022/08/04/audio_2c3c7f2f9b.mp3" type="audio/mpeg">
+    </audio>
+    <h1>Happy Birthday 🎉</h1>
+    <p class="name">To my amazing sister ❤️</p>
+    <div class="stage-note" id="stageNote">Get ready…</div>
+    <<p id="hint">Blow gently toward the mic 🎤</p>
+    <div class="cake">
+      <div class="candle">
+        <div class="flame" id="flame"></div>
+        <div class="smoke hidden" id="smoke"></div>
+      </div>
+    </div>
+      </div>
+    <canvas id="confetti"></canvas>
+  </div>  <script>
+    const flame = document.getElementById('flame');
+    const smoke = document.getElementById('smoke');
+    const whoosh = document.getElementById('whoosh');
+    const music = document.getElementById('music');
+    let blown = false;
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function launchConfetti() {
+      for (let i = 0; i < 120; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 3,
+          vx: (Math.random() - 0.5) * 6,
+          vy: Math.random() * -6 - 3,
+          life: 120,
+          size: Math.random() * 4 + 2,
+          color: `hsl(${Math.random() * 360}, 80%, 60%)`
+        });
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.15;
+        p.life--;
+      });
+      particles = particles.filter(p => p.life > 0);
+      if (particles.length > 0) requestAnimationFrame(animateConfetti);
+    }
+    const smoke = document.getElementById('smoke');
+    let blown = false;
+
+    async function startMic() {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      analyser.smoothingTimeConstant = 0.8;
+      const mic = audioContext.createMediaStreamSource(stream);
+      mic.connect(analyser);
+      analyser.fftSize = 256;
+      const data = new Uint8Array(analyser.frequencyBinCount);
+
+      function detectBlow() {
+        analyser.getByteFrequencyData(data);
+        let volume = data.reduce((a, b) => a + b, 0) / data.length;
+        const threshold = window.innerWidth < 600 ? 45 : 60;((a, b) => a + b, 0) / data.length;
+        if (volume > threshold && !blown) {
+          blown = true;
+          document.getElementById('stageNote').textContent = 'Make a wish…';
+          flame.style.opacity = '0';
+          flame.style.transform = 'translateX(-50%) scale(0.7)';
+          setTimeout(() => {
+            smoke.classList.remove('hidden');
+            whoosh.volume = 0.4;
+            whoosh.play();
+            setTimeout(() => {
+              music.volume = 0.35;
+              music.play();
+              launchConfetti();
+            }, 1200);
+          }, 200);
+        }
+        requestAnimationFrame(detectBlow);
+      }
+      detectBlow();
+    }
+
+    startMic();
+  </script></body>
+</html>
